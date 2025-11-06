@@ -1,5 +1,21 @@
 {
-  "devnet": {},
+  "devnet": {
+    "airdrop-lock.bc": {
+      "codeHash": "0x10c135bebc104001a75b862fa680847a1b8ee6bb849351e99bda4b136332d584",
+      "hashType": "data1",
+      "cellDeps": [
+        {
+          "cellDep": {
+            "outPoint": {
+              "txHash": "0x6bf1e326861dcf813fbcb26895e1549ca84fde93e0e189cee280355d7256bc52",
+              "index": 0
+            },
+            "depType": "code"
+          }
+        }
+      ]
+    }
+  },
   "testnet": {},
   "mainnet": {}
 }
