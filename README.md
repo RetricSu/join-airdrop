@@ -47,11 +47,13 @@ join-airdrop/
 ### Building Contracts
 
 Build all contracts:
+
 ```bash
 pnpm run build
 ```
 
 Build a specific contract:
+
 ```bash
 pnpm run build:contract hello-world
 ```
@@ -59,11 +61,13 @@ pnpm run build:contract hello-world
 ### Running Tests
 
 Run all tests:
+
 ```bash
 pnpm test
 ```
 
 Run tests for a specific contract:
+
 ```bash
 pnpm test -- hello-world
 ```
@@ -71,11 +75,13 @@ pnpm test -- hello-world
 ### Adding New Contracts
 
 Create a new contract:
+
 ```bash
 pnpm run add-contract my-new-contract
 ```
 
 This will:
+
 - Create a new contract directory under `contracts/`
 - Generate a basic contract template
 - Create a corresponding test file
@@ -91,12 +97,14 @@ This will:
 ### Build Output
 
 All contracts are built to the global `dist/` directory:
+
 - `dist/{contract-name}.js` - Bundled JavaScript code
 - `dist/{contract-name}.bc` - Compiled bytecode for CKB execution
 
 ### Testing
 
 Tests use the `ckb-testtool` framework to simulate CKB blockchain execution. Each test:
+
 1. Sets up a mock CKB environment
 2. Deploys the contract bytecode
 3. Executes transactions
@@ -151,6 +159,7 @@ pnpm run deploy -- --network testnet --type-id --privkey 0x...
 ### Deployment Artifacts
 
 After successful deployment, artifacts are saved to the `deployment/` directory:
+
 - `deployment/scripts.json` - Contract script information
 - `deployment/<network>/<contract>/deployment.toml` - Deployment configuration
 - `deployment/<network>/<contract>/migrations/` - Migration history
@@ -158,10 +167,12 @@ After successful deployment, artifacts are saved to the `deployment/` directory:
 ## Dependencies
 
 ### Core Dependencies
+
 - `@ckb-js-std/bindings` - CKB JavaScript VM bindings
 - `@ckb-js-std/core` - Core CKB JavaScript utilities
 
 ### Development Dependencies
+
 - `ckb-testtool` - Testing framework for CKB contracts
 - `esbuild` - Fast JavaScript bundler
 - `jest` - JavaScript testing framework

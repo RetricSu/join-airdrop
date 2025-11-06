@@ -5,7 +5,6 @@ import { getUDTAmountFromData } from "./util";
 function main(): number {
   log.setLevel(log.LogLevel.Debug);
 
-
   // NAME
   //     airdrop-lock - validation logic for airdrop lock contract
   //
@@ -124,7 +123,7 @@ function main(): number {
     // refund flow
     const since = HighLevel.loadInputSince(
       airdropCellIndexInInputs,
-      bindings.SOURCE_INPUT
+      bindings.SOURCE_INPUT,
     );
     if (since > sinceValue) {
       log.error("Lock period has not expired");

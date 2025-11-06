@@ -1,29 +1,31 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
-import path from 'path';
-import fs from 'fs';
+import { execSync } from "child_process";
+import path from "path";
+import fs from "fs";
 
 function buildContract(contractName) {
   if (!contractName) {
-    console.error('Usage: node build-contract.js <contract-name>');
+    console.error("Usage: node build-contract.js <contract-name>");
     process.exit(1);
   }
 
-  const contractDir = path.join('contracts', contractName);
-  const srcDir = path.join(contractDir, 'src');
-  const distDir = path.join('dist');
+  const contractDir = path.join("contracts", contractName);
+  const srcDir = path.join(contractDir, "src");
+  const distDir = path.join("dist");
 
   // Check if contract exists
   if (!fs.existsSync(contractDir)) {
-    console.error(`Contract '${contractName}' not found in contracts directory!`);
+    console.error(
+      `Contract '${contractName}' not found in contracts directory!`,
+    );
     process.exit(1);
   }
 
   // Find the main source file (index.ts or index.js)
   let srcFile;
-  const tsFile = path.join(srcDir, 'index.ts');
-  const jsFile = path.join(srcDir, 'index.js');
+  const tsFile = path.join(srcDir, "index.ts");
+  const jsFile = path.join(srcDir, "index.js");
 
   if (fs.existsSync(tsFile)) {
     srcFile = tsFile;
@@ -50,32 +52,32 @@ function buildContract(contractName) {
     // }
 
     // Step 2: Bundle with esbuild
-    console.log('  📦 Bundling with esbuild...');
+    console.log("  📦 Bundling with esbuild...");
     const esbuildCmd = [
-      './node_modules/.bin/esbuild',
-      '--platform=neutral',
-      '--minify',
-      '--bundle',
-      '--external:@ckb-js-std/bindings',
-      '--target=es2022',
+      "./node_modules/.bin/esbuild",
+      "--platform=neutral",
+      "--minify",
+      "--bundle",
+      "--external:@ckb-js-std/bindings",
+      "--target=es2022",
       srcFile,
       `--outfile=${outputJsFile}`,
-    ].join(' ');
+    ].join(" ");
 
-    execSync(esbuildCmd, { stdio: 'pipe' });
+    execSync(esbuildCmd, { stdio: "pipe" });
 
     // Step 3: Compile to bytecode with ckb-debugger
-    console.log('  🔧 Compiling to bytecode...');
+    console.log("  🔧 Compiling to bytecode...");
     const debuggerCmd = [
-      'ckb-debugger',
+      "ckb-debugger",
       `--read-file ${outputJsFile}`,
-      '--bin node_modules/ckb-testtool/src/unittest/defaultScript/ckb-js-vm',
-      '--',
-      '-c',
+      "--bin node_modules/ckb-testtool/src/unittest/defaultScript/ckb-js-vm",
+      "--",
+      "-c",
       outputBcFile,
-    ].join(' ');
+    ].join(" ");
 
-    execSync(debuggerCmd, { stdio: 'pipe' });
+    execSync(debuggerCmd, { stdio: "pipe" });
 
     console.log(`  ✅ Contract '${contractName}' built successfully!`);
     console.log(`     📄 JavaScript: ${outputJsFile}`);

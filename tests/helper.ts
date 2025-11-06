@@ -24,12 +24,12 @@ export const buildClient = (network: "devnet" | "testnet" | "mainnet") => {
       });
     case "testnet":
       return new ccc.ClientPublicTestnet({
-        url: "http://127.0.0.1:38114", // proxy RPC from offckb, make sure you start the testnet node by running: `offckb node --network testnet` 
-        fallbacks: ["https://testnet.ckb.dev"],  // use non-proxy RPC for fallbacks if proxy server has trouble
+        url: "http://127.0.0.1:38114", // proxy RPC from offckb, make sure you start the testnet node by running: `offckb node --network testnet`
+        fallbacks: ["https://testnet.ckb.dev"], // use non-proxy RPC for fallbacks if proxy server has trouble
       });
     case "mainnet":
       return new ccc.ClientPublicMainnet({
-        url: "http://127.0.0.1:48114", // proxy RPC from offckb, make sure you start the mainnet node by running: `offckb node --network mainnet` 
+        url: "http://127.0.0.1:48114", // proxy RPC from offckb, make sure you start the mainnet node by running: `offckb node --network mainnet`
         fallbacks: ["https://mainnet.ckb.dev"], // use non-proxy RPC for fallbacks if proxy server has trouble
       });
 
