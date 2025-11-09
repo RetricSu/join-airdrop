@@ -2,6 +2,10 @@
 
 A JavaScript project for developing smart contracts on the CKB blockchain.
 
+The contract is a simple airdrop-lock contract that requires users to join first in order to get airdrop so that the minimal-cell providing problems can be solved.
+
+Compare to this contract, the AnyOneCanPay is a more general and maybe more powerful solution on such a problem, but this serves as a out-of-box solution specific for such an use case.
+
 ## Overview
 
 This project uses the CKB JavaScript VM (ckb-js-vm) to write smart contracts in typescript. The contracts are compiled to bytecode and can be deployed to the CKB blockchain.
@@ -11,18 +15,18 @@ This project uses the CKB JavaScript VM (ckb-js-vm) to write smart contracts in 
 ```
 join-airdrop/
 ├── contracts/           # Smart contract source code
-│   └── hello-world/
+│   └── airdrop-lock/
 │       └── src/
-│           └── index.typescript # Contract implementation
+│           └── index.ts # Contract implementation
 ├── tests/              # Contract tests
-│   └── hello-world.test.typescript
+│   └── airdrop-lock.test.ts
 ├── scripts/            # Build and utility scripts
 │   ├── build-all.js
 │   ├── build-contract.js
 │   └── add-contract.js
 ├── dist/               # Compiled output (generated)
-│   ├── hello-world.js  # Bundled JavaScript
-│   └── hello-world.bc  # Compiled bytecode
+│   ├── airdrop-lock.js  # Bundled JavaScript
+│   └── airdrop-lock.bc  # Compiled bytecode
 ├── package.json
 ├── tsconfig.json       # TypeScript configuration
 ├── tsconfig.base.json  # Base TypeScript settings
@@ -55,7 +59,7 @@ pnpm run build
 Build a specific contract:
 
 ```bash
-pnpm run build:contract hello-world
+pnpm run build:contract airdrop-lock
 ```
 
 ### Running Tests
@@ -69,7 +73,7 @@ pnpm test
 Run tests for a specific contract:
 
 ```bash
-pnpm test -- hello-world
+pnpm test -- airdrop-lock
 ```
 
 ### Adding New Contracts
@@ -90,7 +94,7 @@ This will:
 
 ### Contract Development
 
-1. Edit your contract in `contracts/<contract-name>/src/index.typescript`
+1. Edit your contract in `contracts/<contract-name>/src/index.ts`
 2. Build the contract: `pnpm run build:contract <contract-name>`
 3. Run tests: `pnpm test -- <contract-name>`
 
