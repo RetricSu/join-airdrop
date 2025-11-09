@@ -28,7 +28,7 @@ describe("airdrop-lock contract", () => {
     };
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
-    const udtTypeHash = udtTypeScript.codeHash.slice(0, 42); // first 20 bytes + 0x
+    const udtTypeHash = ccc.Script.from(udtTypeScript).hash().slice(0, 42); // first 20 bytes + 0x
     const originalLockHash = signerLock.hash().slice(0, 42); // first 20 bytes + 0x
     const sinceValue = 1000n; // lock period
     const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
@@ -147,9 +147,9 @@ describe("airdrop-lock contract", () => {
     };
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
-    const udtTypeHash = udtTypeScript.codeHash.slice(0, 42); // first 20 bytes + 0x
+    const udtTypeHash = ccc.Script.from(udtTypeScript).hash().slice(0, 42); // first 20 bytes + 0x
     const originalLockHash = signerLock.hash().slice(0, 42); // first 20 bytes + 0x
-    const sinceValue = 146n; // block 146
+    const sinceValue = 2n; // wait 2 blocks for relative since test
     const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
 
     const mainScript2 = {
@@ -187,8 +187,13 @@ describe("airdrop-lock contract", () => {
     const txHash1Refund = await signer.sendTransaction(tx1Refund);
     console.log(`Airdrop cell created: ${txHash1Refund}`);
 
-    // Second transaction: Refund the UDT (since <= sinceValue due to contract bug)
-    const sinceRefund = 145n; // block 145 <= 146
+    // Second transaction: Refund the UDT (relative since >= sinceValue)
+    // Use relative mode with 2 blocks wait to properly test time lock
+    const blocksToWait = 2n;
+    const sinceRefund = (1n << 63n) | blocksToWait;
+    console.log("Waiting for blocks to be mined...");
+    await signer.client.waitTransaction(txHash1Refund, +blocksToWait.toString());
+    
     const tx2Refund = ccc.Transaction.from({
       inputs: [
         {
@@ -217,8 +222,16 @@ describe("airdrop-lock contract", () => {
     await tx2Refund.completeInputsByCapacity(signer);
     await tx2Refund.completeFeeBy(signer, 1000);
     const txHash2Refund = await signer.sendTransaction(tx2Refund);
+    console.log(`Refund transaction sent: ${txHash2Refund}`);
+
+    // Wait for the refund transaction to be confirmed
+    await signer.client.waitTransaction(txHash2Refund);
     console.log(`Refund successful: ${txHash2Refund}`);
 
+    // Test second scenario: absolute since with sinceValue = 0
+    const sinceValue2 = 0n; // no lock for absolute mode test
+    const sinceHex2 = sinceValue2.toString(16).padStart(16, "0");
+    
     const mainScript = {
       codeHash: ckbJsVmScript.script.codeHash,
       hashType: ckbJsVmScript.script.hashType,
@@ -228,7 +241,7 @@ describe("airdrop-lock contract", () => {
           hexFrom(hashTypeToBytes(contractScript.hashType)).slice(2) +
           udtTypeHash.slice(2) +
           originalLockHash.slice(2) +
-          sinceHex,
+          sinceHex2,
       ),
     };
 
@@ -284,6 +297,10 @@ describe("airdrop-lock contract", () => {
     await tx2.completeInputsByCapacity(signer);
     await tx2.completeFeeBy(signer, 1000);
     const txHash2 = await signer.sendTransaction(tx2);
+    console.log(`Refund transaction sent: ${txHash2}`);
+    
+    // Wait for the refund transaction to be confirmed
+    await signer.client.waitTransaction(txHash2);
     console.log(`Refund successful: ${txHash2}`);
-  });
+  }, 60000); // Increase timeout to 60 seconds to account for block waiting
 });

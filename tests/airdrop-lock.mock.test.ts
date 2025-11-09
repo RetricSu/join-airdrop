@@ -38,7 +38,7 @@ describe("airdrop-lock contract", () => {
     const sinceValue = 1000n;
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
-    const udtTypeHash = udtTypeScript.codeHash.slice(0, 42); // first 20 bytes + 0x
+    const udtTypeHash = udtTypeScript.hash().slice(0, 42); // first 20 bytes + 0x
     const originalLockHash = originalLockScript.hash().slice(0, 42); // first 20 bytes + 0x
     const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
 
@@ -118,7 +118,7 @@ describe("airdrop-lock contract", () => {
     const sinceValue = 0n;
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
-    const udtTypeHash = udtTypeScript.codeHash.slice(0, 42); // first 20 bytes + 0x
+    const udtTypeHash = udtTypeScript.hash().slice(0, 42); // first 20 bytes + 0x
     const originalLockHash = originalLockScript.hash().slice(0, 42); // first 20 bytes + 0x
     const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
 
@@ -138,7 +138,7 @@ describe("airdrop-lock contract", () => {
       "0xE8030000000000000000000000000000", // UDT amount 1000
     );
     const input = Resource.createCellInput(airdropInputCell);
-    input.since = 0n; // Set since to 0 (expired)
+    input.since = 1n; // Set since to 1 (> 0, lock period expired)
     tx.inputs.push(input);
 
     // 1 output cell: UDT goes back to original lock

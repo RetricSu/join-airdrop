@@ -1,0 +1,12 @@
+{
+  "cell_recipes": [
+    {
+      "name": "airdrop-lock.bc",
+      "tx_hash": "0xbebaac5673f12f567ed8cfc3d37131f6e948cd704d4ccca50dd11251091ca976",
+      "index": 0,
+      "occupied_capacity": 3027700000000,
+      "data_hash": "0xdd0cabf278449d082d07405a6b2db8c335fcbd1627f742c806532dcb77cf5e19"
+    }
+  ],
+  "dep_group_recipes": []
+}

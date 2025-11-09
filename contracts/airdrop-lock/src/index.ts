@@ -1,6 +1,7 @@
 import * as bindings from "@ckb-js-std/bindings";
 import { HighLevel, log, bytesEq } from "@ckb-js-std/core";
 import { getUDTAmountFromData } from "./util";
+import { ValidateError } from "./error";
 
 function main(): number {
   log.setLevel(log.LogLevel.Debug);
@@ -71,7 +72,7 @@ function main(): number {
       const cell = HighLevel.loadCell(i, bindings.SOURCE_INPUT);
       if (cell.type !== null) {
         if (
-          bytesEq(cell.type!.hash(), bindings.hex.decode(udtTypeScriptHash))
+          bytesEq(cell.type!.hash().slice(0, 20), bindings.hex.decode(udtTypeScriptHash))
         ) {
           // udt cell found
           isRefund = false;
@@ -112,12 +113,12 @@ function main(): number {
 
     if (!airdropCellFoundInOutputs) {
       log.error("Airdrop cell not found in outputs");
-      return 1;
+      return ValidateError.AirDropCellNotFound;
     }
 
     if (receiverUdtAmountOutput <= receiverUdtAmountInput) {
       log.error("UDT amount did not increase in output");
-      return 1;
+      return ValidateError.UDTAmountNotIncreased;
     }
   } else {
     // refund flow
@@ -125,9 +126,16 @@ function main(): number {
       airdropCellIndexInInputs,
       bindings.SOURCE_INPUT,
     );
-    if (since > sinceValue) {
+    const isRelative = (since & (1n << 63n)) !== 0n;
+    const metricFlag = (since >> 61n) & 0x3n;
+    if (metricFlag !== 0n) {
+      log.error("Unsupported metric flag");
+      return ValidateError.UnsupportedSinceMetricFlag;
+    }
+    const sinceValueToCheck = isRelative ? (since & ((1n << 56n) - 1n)) : since;
+    if (sinceValueToCheck < sinceValue) {
       log.error("Lock period has not expired");
-      return 1;
+      return ValidateError.LockPeriodNotExpired;
     }
   }
 
