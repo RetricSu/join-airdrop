@@ -4,18 +4,13 @@ import {
   hashTypeToBytes,
   Cell,
   Hex,
-  HashType,
 } from "@ckb-ccc/connector-react";
-import scripts from "../deployment/scripts.json";
-import systemScripts from "../deployment/system-scripts.json";
+import { ckbJsVmScript, contractScript, sudtScript } from "./ckbClient";
 
 export const findJoinAirdropCells = async (
   client: ccc.Client,
   udtTypeHash: string,
 ): Promise<Cell[]> => {
-  const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
-  const contractScript = scripts.devnet["airdrop-lock.bc"];
-
   const mainScript = {
     codeHash: ckbJsVmScript.script.codeHash,
     hashType: ckbJsVmScript.script.hashType,
@@ -46,9 +41,6 @@ export const createJoinAirdropCell = async (
   udtTypeHash: string,
   sinceValue: bigint,
 ): Promise<string> => {
-  const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
-  const contractScript = scripts.devnet["airdrop-lock.bc"];
-
   const signerAddressObj = await signer.getRecommendedAddressObj();
   const signerLock = signerAddressObj.script;
 
@@ -88,12 +80,9 @@ export const mintUDTToJoinCell = async (
   udtSigner: ccc.Signer,
   amount: bigint,
 ): Promise<string> => {
-  const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
-  const contractScript = scripts.devnet["airdrop-lock.bc"];
-
   const udtTypeScript = {
-    codeHash: systemScripts.devnet.sudt.script.codeHash,
-    hashType: systemScripts.devnet.sudt.script.hashType,
+    codeHash: sudtScript.script.codeHash,
+    hashType: sudtScript.script.hashType,
     args: (await udtSigner.getRecommendedAddressObj()).script.hash(), // UDT owner
   };
 
@@ -113,7 +102,7 @@ export const mintUDTToJoinCell = async (
     cellDeps: [
       ...ckbJsVmScript.script.cellDeps.map((c: any) => c.cellDep),
       ...contractScript.cellDeps.map((c: any) => c.cellDep),
-      ...systemScripts.devnet.sudt.script.cellDeps.map((c: any) => c.cellDep),
+      ...sudtScript.script.cellDeps.map((c: any) => c.cellDep),
     ],
   });
 
@@ -132,8 +121,8 @@ export function getListedUDTTypeHash(): Hex {
 
 export function getDefaultUDTTypeHashFromLock(lock: ccc.Script): Hex {
   const script: ccc.ScriptLike = {
-    codeHash: systemScripts.devnet.sudt.script.codeHash,
-    hashType: systemScripts.devnet.sudt.script.hashType,
+    codeHash: sudtScript.script.codeHash,
+    hashType: sudtScript.script.hashType,
     args: lock.hash(), // Extract UDT type hash from args
   };
 

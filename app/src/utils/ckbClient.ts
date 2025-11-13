@@ -5,7 +5,8 @@ import {
   Script,
 } from "@ckb-ccc/connector-react";
 import systemScripts from "../deployment/system-scripts.json";
-import { NetworkType } from "./env";
+import scripts from "../deployment/scripts.json";
+import { getNetwork, NetworkType } from "./env";
 
 export const buildClient = (network: NetworkType) => {
   switch (network) {
@@ -43,3 +44,18 @@ export const DEVNET_SCRIPTS: Record<string, KnownScriptType> = {
   [KnownScript.NostrLock]: systemScripts.devnet["nostr_lock"]!
     .script as KnownScriptType,
 };
+
+export const ckbJsVmScript =
+  getNetwork() === "devnet"
+    ? systemScripts.devnet["ckb_js_vm"]
+    : systemScripts.testnet["ckb_js_vm"];
+
+export const contractScript =
+  getNetwork() === "devnet"
+    ? scripts.devnet["airdrop-lock.bc"]
+    : scripts.testnet["airdrop-lock.bc"];
+
+export const sudtScript =
+  getNetwork() === "devnet"
+    ? systemScripts.devnet.sudt
+    : systemScripts.testnet.sudt;

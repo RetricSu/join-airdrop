@@ -16,6 +16,22 @@
       ]
     }
   },
-  "testnet": {},
+  "testnet": {
+    "airdrop-lock.bc": {
+      "codeHash": "0x179fc3e21f51bd4f8bb9c26d6c8b279eecb75b21777f24c9c814bca4337012e0",
+      "hashType": "type",
+      "cellDeps": [
+        {
+          "cellDep": {
+            "outPoint": {
+              "txHash": "0x28278d84a928538d4045213a07822a4f867b90b246612cb92a620b291e330267",
+              "index": 0
+            },
+            "depType": "code"
+          }
+        }
+      ]
+    }
+  },
   "mainnet": {}
 }

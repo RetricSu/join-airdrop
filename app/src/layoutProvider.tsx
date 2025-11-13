@@ -2,10 +2,11 @@ import React from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { CSSProperties } from "react";
 import { buildClient } from "./utils/ckbClient";
+import { getNetwork } from "./utils/env";
 
 export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const defaultClient = React.useMemo(() => {
-    return buildClient("devnet");
+    return buildClient(getNetwork());
   }, []);
 
   return (
@@ -28,18 +29,15 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
       clientOptions={[
         {
           name: "CKB Devnet",
-          client: new ccc.ClientPublicTestnet({
-            url: "http://127.0.0.1:28114",
-            fallbacks: ["http://127.0.0.1:8114"],
-          }),
+          client: buildClient("devnet"),
         },
         {
           name: "CKB Testnet",
-          client: new ccc.ClientPublicTestnet(),
+          client: buildClient("testnet"),
         },
         {
           name: "CKB Mainnet",
-          client: new ccc.ClientPublicMainnet(),
+          client: buildClient("mainnet"),
         },
       ]}
     >
