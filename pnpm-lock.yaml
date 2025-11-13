@@ -30,6 +30,9 @@ importers:
       ckb-testtool:
         specifier: 1.0.3
         version: 1.0.3(typescript@5.8.3)
+      cross-fetch:
+        specifier: ^4.1.0
+        version: 4.1.0
       esbuild:
         specifier: ~0.25.8
         version: 0.25.12
@@ -48,6 +51,9 @@ importers:
       typescript:
         specifier: ~5.8.2
         version: 5.8.3
+      web-streams-polyfill:
+        specifier: ^4.2.0
+        version: 4.2.0
 
   app:
     dependencies:
@@ -6275,6 +6281,10 @@ packages:
 
   wbuf@1.7.3:
     resolution: {integrity: sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==}
+
+  web-streams-polyfill@4.2.0:
+    resolution: {integrity: sha512-0rYDzGOh9EZpig92umN5g5D/9A1Kff7k0/mzPSSCY8jEQeYkgRMoY7LhbXtUCWzLCMX0TUE9aoHkjFNB7D9pfA==}
+    engines: {node: '>= 8'}
 
   web-vitals@2.1.4:
     resolution: {integrity: sha512-sVWcwhU5mX6crfI5Vd2dC4qchyTqxV8URinzt25XqVh+bHEPGH4C3NPrNionCP7Obx59wrYEbNlw4Z8sjALzZg==}
@@ -14394,6 +14404,8 @@ snapshots:
   wbuf@1.7.3:
     dependencies:
       minimalistic-assert: 1.0.1
+
+  web-streams-polyfill@4.2.0: {}
 
   web-vitals@2.1.4: {}
 
