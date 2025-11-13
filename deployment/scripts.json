@@ -1,13 +1,13 @@
 {
   "devnet": {
     "airdrop-lock.bc": {
-      "codeHash": "0x252da746848dfada093aa9a6457a3749422924fab7d10cd658e93f07c4e78834",
+      "codeHash": "0x5418c070eebca767dbea75aba9089994794dde91fa7c5fe50cf5546be3e230a5",
       "hashType": "data1",
       "cellDeps": [
         {
           "cellDep": {
             "outPoint": {
-              "txHash": "0x79e5f5d6a7eb2b2bbc459cfc817888ad01f88f9d027c7b1a7ecb5bfbac8f0599",
+              "txHash": "0x7d13003502e5fc674f09a26cd5818503ec027d29c73638535bc1d188fe968fd0",
               "index": 0
             },
             "depType": "code"

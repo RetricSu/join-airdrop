@@ -18,10 +18,10 @@ function main(): number {
   //     [40..48]  : since value for lock period (u64 little-endian)
   //
   // UNLOCKING LOGIC
-  //     If there is at least one extra UDT cell in the inputs:
+  //     If there is at least one cell in the outputs using the airdrop lock(normal unlock flow):
   //         1. Check the first extra UDT cell's lock script hash matches the dropper's lock script hash.
   //         2. Output cell must have at least one cell with the UDT and airdrop-lock, and the UDT amount must increase.
-  //     If there is no extra UDT cell in the inputs:
+  //     else(refund flow):
   //         1. Check the since field to ensure the lock period has passed.
   //         2. Check the output cell lock hash matches the original lock hash.
 
@@ -38,7 +38,6 @@ function main(): number {
   log.debug(`Original Lock Hash: ${originalLockHash}`);
   log.debug(`Since Value: ${sinceValue}`);
 
-  let isFirstDrop = false;
   let receiverUdtAmountInput = BigInt(0);
   let airdropCellIndexInInputs = -1;
   let isRefund = true;
@@ -52,9 +51,6 @@ function main(): number {
         if (cellData.byteLength === 16) {
           receiverUdtAmountInput = getUDTAmountFromData(cellData);
         }
-        if (cell.type === null) {
-          isFirstDrop = true;
-        }
         break;
       }
     } catch (error) {
@@ -64,20 +60,14 @@ function main(): number {
   }
 
   for (let i = 0; ; i++) {
-    if (i === airdropCellIndexInInputs) {
-      continue; // skip the airdrop cell itself
-    }
-
     try {
-      const cell = HighLevel.loadCell(i, bindings.SOURCE_INPUT);
-      if (cell.type !== null) {
+      const cell = HighLevel.loadCell(i, bindings.SOURCE_OUTPUT);
         if (
-          bytesEq(cell.type!.hash().slice(0, 20), bindings.hex.decode(udtTypeScriptHash))
+          bytesEq(cell.lock.hash(), script.hash())
         ) {
           // udt cell found
           isRefund = false;
         }
-      }
     } catch (error) {
       // index out of range
       break;
