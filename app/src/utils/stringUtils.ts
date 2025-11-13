@@ -1,7 +1,7 @@
 export function truncateString(
   str: string,
   frontChars: number,
-  endChars: number
+  endChars: number,
 ): string {
   if (str.length <= frontChars + endChars) {
     return str;
@@ -12,7 +12,7 @@ export function truncateString(
 export function truncateAddress(
   address: string,
   frontChars: number = 6,
-  endChars: number = 4
+  endChars: number = 4,
 ): string {
   return truncateString(address, frontChars, endChars);
 }

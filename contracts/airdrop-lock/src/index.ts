@@ -47,9 +47,15 @@ function main(): number {
       const cell = HighLevel.loadCell(i, bindings.SOURCE_INPUT);
       if (bytesEq(cell.lock.hash(), script.hash())) {
         airdropCellIndexInInputs = i;
-        const cellData = HighLevel.loadCellData(i, bindings.SOURCE_INPUT);
-        if (cellData.byteLength === 16) {
-          receiverUdtAmountInput = getUDTAmountFromData(cellData);
+        if (cell.type != null) {
+          try {
+            const cellData = HighLevel.loadCellData(i, bindings.SOURCE_INPUT);
+            if (cellData.byteLength === 16) {
+              receiverUdtAmountInput = getUDTAmountFromData(cellData);
+            }
+          } catch (error) {
+            log.error("Failed to load cell data");
+          }
         }
         break;
       }
@@ -59,26 +65,28 @@ function main(): number {
     }
   }
 
+  log.debug("airdropCellIndexInInputs = " + airdropCellIndexInInputs);
+
   for (let i = 0; ; i++) {
     try {
       const cell = HighLevel.loadCell(i, bindings.SOURCE_OUTPUT);
-        if (
-          bytesEq(cell.lock.hash(), script.hash())
-        ) {
-          // udt cell found
-          isRefund = false;
-        }
+      if (bytesEq(cell.lock.hash(), script.hash())) {
+        // udt cell found
+        isRefund = false;
+      }
     } catch (error) {
       // index out of range
       break;
     }
   }
 
+  log.debug("is refund: " + isRefund);
+
   if (!isRefund) {
     // normal unlock flow
     if (airdropCellIndexInInputs < 0) {
       log.error("Airdrop cell not found in inputs");
-      return 1;
+      return ValidateError.AirDropCellNotFound;
     }
 
     let receiverUdtAmountOutput = BigInt(0);
@@ -122,7 +130,7 @@ function main(): number {
       log.error("Unsupported metric flag");
       return ValidateError.UnsupportedSinceMetricFlag;
     }
-    const sinceValueToCheck = isRelative ? (since & ((1n << 56n) - 1n)) : since;
+    const sinceValueToCheck = isRelative ? since & ((1n << 56n) - 1n) : since;
     if (sinceValueToCheck < sinceValue) {
       log.error("Lock period has not expired");
       return ValidateError.LockPeriodNotExpired;

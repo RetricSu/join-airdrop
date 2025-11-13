@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
-import { findJoinAirdropCells, mintUDTToJoinCell, getListedUDTTypeHash, getDefaultUDTTypeHashFromLock } from '../utils/airdropUtils';
+import {
+  findJoinAirdropCells,
+  mintUDTToJoinCell,
+  getListedUDTTypeHash,
+  getDefaultUDTTypeHashFromLock,
+} from "../utils/airdropUtils";
 
 const MintToAirdrop: React.FC = () => {
   const signer = ccc.useSigner();
   const [airdropCells, setAirdropCells] = useState<any[]>([]);
   const [loadingCells, setLoadingCells] = useState(true);
   const [selectedCell, setSelectedCell] = useState<any | null>(null);
-  const [mintAmount, setMintAmount] = useState<string>('1000');
+  const [mintAmount, setMintAmount] = useState<string>("1000");
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [signerUdtTypeHash, setSignerUdtTypeHash] = useState<string | null>(null);
+  const [signerUdtTypeHash, setSignerUdtTypeHash] = useState<string | null>(
+    null,
+  );
 
   const udtTypeHash = getListedUDTTypeHash();
 
@@ -24,7 +31,7 @@ const MintToAirdrop: React.FC = () => {
         const cells = await findJoinAirdropCells(signer.client, udtTypeHash);
         setAirdropCells(cells);
       } catch (err) {
-        console.error('Error loading cells:', err);
+        console.error("Error loading cells:", err);
       } finally {
         setLoadingCells(false);
       }
@@ -56,7 +63,7 @@ const MintToAirdrop: React.FC = () => {
       const amount = BigInt(mintAmount);
 
       if (amount <= 0n) {
-        throw new Error('Mint amount must be greater than 0');
+        throw new Error("Mint amount must be greater than 0");
       }
 
       const mintTxHash = await mintUDTToJoinCell(selectedCell, signer, amount);
@@ -67,11 +74,10 @@ const MintToAirdrop: React.FC = () => {
       setAirdropCells(cells);
 
       // Reset form
-      setMintAmount('1000');
+      setMintAmount("1000");
       setSelectedCell(null);
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mint UDT');
+      setError(err instanceof Error ? err.message : "Failed to mint UDT");
     } finally {
       setLoading(false);
     }
@@ -81,20 +87,23 @@ const MintToAirdrop: React.FC = () => {
     <div className="space-y-8">
       {/* Mint UDT Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Mint UDT to Join Airdrop Cell</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Mint UDT to Join Airdrop Cell
+        </h2>
 
         <div className="space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-            <p className='text-sm'>
-              <strong>Your UDT Type Hash:</strong> {signerUdtTypeHash}</p>
+            <p className="text-sm">
+              <strong>Your UDT Type Hash:</strong> {signerUdtTypeHash}
+            </p>
             <p className="text-sm text-blue-800">
               <strong>Target UDT Type Hash:</strong> {udtTypeHash}
             </p>
             <p className="text-xs text-blue-600 mt-1">
-              You can only mint UDT to cells that use this target UDT type hash. The two UDT type hashes above must be the same to proceed.
+              You can only mint UDT to cells that use this target UDT type hash.
+              The two UDT type hashes above must be the same to proceed.
             </p>
           </div>
-
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -115,8 +124,8 @@ const MintToAirdrop: React.FC = () => {
                     className={`border rounded-md p-3 cursor-pointer transition-colors ${
                       selectedCell?.outPoint.txHash === cell.outPoint.txHash &&
                       selectedCell?.outPoint.index === cell.outPoint.index
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-gray-400'
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                     onClick={() => setSelectedCell(cell)}
                   >
@@ -124,12 +133,15 @@ const MintToAirdrop: React.FC = () => {
                       <div>
                         <p className="font-medium">Airdrop Cell #{index + 1}</p>
                         <p className="text-sm text-gray-600 font-mono">
-                          {cell.outPoint.txHash.slice(0, 16)}...{cell.outPoint.txHash.slice(-8)}
+                          {cell.outPoint.txHash.slice(0, 16)}...
+                          {cell.outPoint.txHash.slice(-8)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-600">Capacity</p>
-                        <p className="font-semibold">{ccc.fixedPointToString(cell.cellOutput.capacity)} CKB</p>
+                        <p className="font-semibold">
+                          {ccc.fixedPointToString(cell.cellOutput.capacity)} CKB
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -140,7 +152,10 @@ const MintToAirdrop: React.FC = () => {
 
           {selectedCell && (
             <div>
-              <label htmlFor="mintAmount" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="mintAmount"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Mint Amount
               </label>
               <input
@@ -152,7 +167,9 @@ const MintToAirdrop: React.FC = () => {
                 placeholder="1000"
                 min="1"
               />
-              <p className="text-xs text-gray-500 mt-1">Amount of UDT tokens to mint to the selected cell</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Amount of UDT tokens to mint to the selected cell
+              </p>
             </div>
           )}
 
@@ -167,7 +184,7 @@ const MintToAirdrop: React.FC = () => {
                 Minting...
               </div>
             ) : (
-              'Mint UDT to Cell'
+              "Mint UDT to Cell"
             )}
           </button>
         </div>
@@ -180,20 +197,34 @@ const MintToAirdrop: React.FC = () => {
 
         {txHash && (
           <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-3">
-            <p className="text-green-800 text-sm font-medium">UDT minted successfully!</p>
-            <p className="text-green-700 text-xs mt-1 font-mono break-all">{txHash}</p>
+            <p className="text-green-800 text-sm font-medium">
+              UDT minted successfully!
+            </p>
+            <p className="text-green-700 text-xs mt-1 font-mono break-all">
+              {txHash}
+            </p>
           </div>
         )}
       </div>
 
       {/* Info Section */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-        <h3 className="text-sm font-medium text-yellow-800 mb-2">Important Notes:</h3>
+        <h3 className="text-sm font-medium text-yellow-800 mb-2">
+          Important Notes:
+        </h3>
         <ul className="text-xs text-yellow-700 space-y-1">
           <li>• Only the UDT owner can mint tokens to airdrop cells</li>
-          <li>• Minted tokens will be locked in the airdrop cell according to the cell's lock script</li>
-          <li>• Users can only join airdrop cells that have been funded with UDT tokens</li>
-          <li>• Make sure you have sufficient CKB to pay for transaction fees</li>
+          <li>
+            • Minted tokens will be locked in the airdrop cell according to the
+            cell's lock script
+          </li>
+          <li>
+            • Users can only join airdrop cells that have been funded with UDT
+            tokens
+          </li>
+          <li>
+            • Make sure you have sufficient CKB to pay for transaction fees
+          </li>
         </ul>
       </div>
     </div>

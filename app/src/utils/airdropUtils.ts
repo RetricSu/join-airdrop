@@ -1,12 +1,19 @@
-import { ccc, hexFrom, hashTypeToBytes, Cell, Hex, HashType } from "@ckb-ccc/connector-react";
+import {
+  ccc,
+  hexFrom,
+  hashTypeToBytes,
+  Cell,
+  Hex,
+  HashType,
+} from "@ckb-ccc/connector-react";
 import scripts from "../deployment/scripts.json";
 import systemScripts from "../deployment/system-scripts.json";
 
 export const findJoinAirdropCells = async (
   client: ccc.Client,
-  udtTypeHash: string
+  udtTypeHash: string,
 ): Promise<Cell[]> => {
-   const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
+  const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
   const contractScript = scripts.devnet["airdrop-lock.bc"];
 
   const mainScript = {
@@ -16,28 +23,28 @@ export const findJoinAirdropCells = async (
       "0x0000" +
         contractScript.codeHash.slice(2) +
         hexFrom(hashTypeToBytes(contractScript.hashType)).slice(2) +
-        udtTypeHash.slice(2, 42)
+        udtTypeHash.slice(2, 42),
     ),
   };
 
   const iterator = client.findCells({
-	script: mainScript,
-	scriptType: "lock",
-	scriptSearchMode: "prefix",
+    script: mainScript,
+    scriptType: "lock",
+    scriptSearchMode: "prefix",
   });
 
   const cells: Cell[] = [];
 
   for await (const cell of iterator) {
-	cells.push(cell);
+    cells.push(cell);
   }
-return cells;
+  return cells;
 };
 
 export const createJoinAirdropCell = async (
   signer: ccc.Signer,
   udtTypeHash: string,
-  sinceValue: bigint
+  sinceValue: bigint,
 ): Promise<string> => {
   const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
   const contractScript = scripts.devnet["airdrop-lock.bc"];
@@ -58,7 +65,7 @@ export const createJoinAirdropCell = async (
         hexFrom(hashTypeToBytes(contractScript.hashType)).slice(2) +
         udtTypeHash.slice(2) +
         originalLockHash.slice(2) +
-        sinceHex
+        sinceHex,
     ),
   };
 
@@ -67,7 +74,7 @@ export const createJoinAirdropCell = async (
       {
         lock: mainScript,
       },
-    ], 
+    ],
   });
 
   await tx.completeInputsByCapacity(signer);
@@ -79,11 +86,11 @@ export const createJoinAirdropCell = async (
 export const mintUDTToJoinCell = async (
   joinCell: ccc.Cell,
   udtSigner: ccc.Signer,
-  amount: bigint
+  amount: bigint,
 ): Promise<string> => {
   const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
   const contractScript = scripts.devnet["airdrop-lock.bc"];
-  
+
   const udtTypeScript = {
     codeHash: systemScripts.devnet.sudt.script.codeHash,
     hashType: systemScripts.devnet.sudt.script.hashType,
@@ -93,7 +100,7 @@ export const mintUDTToJoinCell = async (
   const tx = ccc.Transaction.from({
     inputs: [
       {
-	      previousOutput: joinCell.outPoint,
+        previousOutput: joinCell.outPoint,
       },
     ],
     outputs: [
