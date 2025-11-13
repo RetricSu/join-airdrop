@@ -1,0 +1,7 @@
+packages:
+  - "."
+  - app
+
+onlyBuiltDependencies:
+  - core-js
+  - core-js-pure

@@ -88,6 +88,67 @@ describe("airdrop-lock contract", () => {
     await verifier.verifySuccess(true);
   });
 
+  test("should execute successfully for direct UDT mint to airdrop cell", async () => {
+    const resource = Resource.default();
+    const tx = Transaction.default();
+
+    const mainScript = resource.deployCell(
+      hexFrom(readFileSync(DEFAULT_SCRIPT_CKB_JS_VM)),
+      tx,
+      false,
+    );
+    const alwaysSuccessScript = resource.deployCell(
+      hexFrom(readFileSync(DEFAULT_SCRIPT_ALWAYS_SUCCESS)),
+      tx,
+      false,
+    );
+    const contractScript = resource.deployCell(
+      hexFrom(readFileSync("dist/airdrop-lock.bc")),
+      tx,
+      false,
+    );
+
+    // Create UDT type script (use always success for mock)
+    const udtTypeScript = alwaysSuccessScript;
+
+    // Create original lock script (receiver's lock)
+    const originalLockScript = alwaysSuccessScript;
+
+    // Since value (lock period) - set to a small value for testing
+    const sinceValue = 1000n;
+
+    // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
+    const udtTypeHash = udtTypeScript.hash().slice(0, 42); // first 20 bytes + 0x
+    const originalLockHash = originalLockScript.hash().slice(0, 42); // first 20 bytes + 0x
+    const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
+
+    mainScript.args = hexFrom(
+      "0x0000" +
+        contractScript.codeHash.slice(2) +
+        hexFrom(hashTypeToBytes(contractScript.hashType)).slice(2) +
+        udtTypeHash.slice(2) +
+        originalLockHash.slice(2) +
+        sinceHex,
+    );
+
+    // 1 input cell: empty airdrop cell (no type)
+    const airdropInputCell = resource.mockCell(
+      mainScript,
+      undefined, // no type
+      "0x", // no data
+    );
+    tx.inputs.push(Resource.createCellInput(airdropInputCell));
+
+    // 1 output cell: airdrop cell with UDT minted by issuer
+    tx.outputs.push(Resource.createCellOutput(mainScript, udtTypeScript));
+    tx.outputsData.push(hexFrom("0xE8030000000000000000000000000000")); // UDT amount 1000 minted to airdrop cell
+
+    const verifier = Verifier.from(resource, tx);
+    // if you are using the native ckb-debugger, you can delete the following line.
+    verifier.setWasmDebuggerEnabled(true);
+    await verifier.verifySuccess(true);
+  });
+
   test("should execute successfully for refund", async () => {
     const resource = Resource.default();
     const tx = Transaction.default();

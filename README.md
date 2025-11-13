@@ -2,9 +2,15 @@
 
 A JavaScript project for developing smart contracts on the CKB blockchain.
 
-The contract is a simple airdrop-lock contract that requires users to join first in order to get airdrop so that the minimal-cell providing problems can be solved.
+The contract is a simple airdrop-lock contract that requires users to join first in order to get airdrop for a specific UDT token so that the minimal-cell providing problems can be solved.
 
-Compare to this contract, the AnyOneCanPay is a more general and maybe more powerful solution on such a problem, but this serves as a out-of-box solution specific for such an use case.
+Compare to this contract, the [AnyOneCanPay](https://github.com/cryptape/anyone-can-pay) is a more general and maybe more powerful solution on such a problem, but this serves as a out-of-box solution specific for such an use case.
+
+The smart contract also comes with a full app for demonstrate
+
+![Join Airdrop](docs/join.png)
+
+![Mint to Airdrop](docs/mint.png)
 
 ## Overview
 

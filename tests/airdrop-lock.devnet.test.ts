@@ -192,8 +192,11 @@ describe("airdrop-lock contract", () => {
     const blocksToWait = 2n;
     const sinceRefund = (1n << 63n) | blocksToWait;
     console.log("Waiting for blocks to be mined...");
-    await signer.client.waitTransaction(txHash1Refund, +blocksToWait.toString());
-    
+    await signer.client.waitTransaction(
+      txHash1Refund,
+      +blocksToWait.toString(),
+    );
+
     const tx2Refund = ccc.Transaction.from({
       inputs: [
         {
@@ -231,7 +234,7 @@ describe("airdrop-lock contract", () => {
     // Test second scenario: absolute since with sinceValue = 0
     const sinceValue2 = 0n; // no lock for absolute mode test
     const sinceHex2 = sinceValue2.toString(16).padStart(16, "0");
-    
+
     const mainScript = {
       codeHash: ckbJsVmScript.script.codeHash,
       hashType: ckbJsVmScript.script.hashType,
@@ -298,9 +301,97 @@ describe("airdrop-lock contract", () => {
     await tx2.completeFeeBy(signer, 1000);
     const txHash2 = await signer.sendTransaction(tx2);
     console.log(`Refund transaction sent: ${txHash2}`);
-    
+
     // Wait for the refund transaction to be confirmed
     await signer.client.waitTransaction(txHash2);
     console.log(`Refund successful: ${txHash2}`);
   }, 60000); // Increase timeout to 60 seconds to account for block waiting
+
+  test("should mint UDT directly to airdrop cell", async () => {
+    const ckbJsVmScript = systemScripts.devnet["ckb_js_vm"];
+    const contractScript = scripts.devnet["airdrop-lock.bc"];
+
+    const signerAddressObj = await signer.getRecommendedAddressObj();
+    const signerLock = signerAddressObj.script;
+
+    // Create UDT type script (using SUDT deployed on devnet)
+    const udtTypeScript = {
+      codeHash: systemScripts.devnet.sudt.script.codeHash,
+      hashType: systemScripts.devnet.sudt.script.hashType,
+      args: signerLock.hash(), // SUDT owner is the signer
+    };
+
+    // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
+    const udtTypeHash = ccc.Script.from(udtTypeScript).hash().slice(0, 42); // first 20 bytes + 0x
+    const originalLockHash = signerLock.hash().slice(0, 42); // first 20 bytes + 0x
+    const sinceValue = 1000n; // lock period
+    const sinceHex = sinceValue.toString(16).padStart(16, "0"); // 8 bytes hex
+
+    const mainScript = {
+      codeHash: ckbJsVmScript.script.codeHash,
+      hashType: ckbJsVmScript.script.hashType,
+      args: hexFrom(
+        "0x0000" +
+          contractScript.codeHash.slice(2) +
+          hexFrom(hashTypeToBytes(contractScript.hashType)).slice(2) +
+          udtTypeHash.slice(2) +
+          originalLockHash.slice(2) +
+          sinceHex,
+      ),
+    };
+
+    // First transaction: Create an empty airdrop cell
+    const tx1 = ccc.Transaction.from({
+      outputs: [
+        {
+          capacity: ccc.fixedPointFrom(1000),
+          lock: mainScript,
+        },
+      ],
+      outputsData: [hexFrom("0x")], // empty data
+      cellDeps: [
+        ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
+        ...contractScript.cellDeps.map((c) => c.cellDep),
+      ],
+    });
+
+    await tx1.completeInputsByCapacity(signer);
+    await tx1.completeFeeBy(signer, 1000);
+    const txHash1 = await signer.sendTransaction(tx1);
+    console.log(`Empty airdrop cell created: ${txHash1}`);
+
+    // Second transaction: Mint UDT directly to the airdrop cell
+    const tx2 = ccc.Transaction.from({
+      inputs: [
+        {
+          previousOutput: {
+            txHash: txHash1,
+            index: 0,
+          },
+        },
+      ],
+      outputs: [
+        {
+          capacity: ccc.fixedPointFrom(1000),
+          lock: mainScript, // keep the same airdrop lock
+          type: udtTypeScript, // add UDT type
+        },
+      ],
+      outputsData: [hexFrom("0xE8030000000000000000000000000000")], // 1000 UDT minted
+      cellDeps: [
+        ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
+        ...contractScript.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+      ],
+    });
+
+    await tx2.completeInputsByCapacity(signer);
+    await tx2.completeFeeBy(signer, 1000);
+    const txHash2 = await signer.sendTransaction(tx2);
+    console.log(`UDT minted directly to airdrop cell: ${txHash2}`);
+
+    // Wait for the transaction to be confirmed
+    await signer.client.waitTransaction(txHash2);
+    console.log(`Direct UDT mint successful: ${txHash2}`);
+  }, 60000); // Increase timeout to 60 seconds for multiple transactions
 });
