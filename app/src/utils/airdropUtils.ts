@@ -113,10 +113,14 @@ export const mintUDTToJoinCell = async (
 };
 
 export function getListedUDTTypeHash(): Hex {
-  // TODO: Update this to your actual listed airdrop UDT type hash
   // This should be the type hash of the UDT token used for the airdrop
   // You can get this from getDefaultUDTTypeHashFromLock
-  return "0x8f3bb8911855c4496a9e4723c9098d2734012ea6ed7ab291bdada6a9282b96ce";
+  const envTypeHash = process.env.REACT_APP_TARGET_UDT_TYPE_HASH;
+  if (envTypeHash && envTypeHash.startsWith("0x") && envTypeHash.length === 66) {
+    return envTypeHash as Hex;
+  }else{
+    throw new Error("REACT_APP_TARGET_UDT_TYPE_HASH is not set correctly in environment variables");
+  }
 }
 
 export function getDefaultUDTTypeHashFromLock(lock: ccc.Script): Hex {
