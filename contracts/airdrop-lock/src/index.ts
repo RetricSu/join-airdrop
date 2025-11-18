@@ -97,9 +97,21 @@ function main(): number {
         const cell = HighLevel.loadCell(i, bindings.SOURCE_OUTPUT);
         if (bytesEq(cell.lock.hash(), script.hash())) {
           airdropCellFoundInOutputs = true;
-          const cellData = HighLevel.loadCellData(i, bindings.SOURCE_OUTPUT);
-          if (cellData.byteLength === 16) {
-            receiverUdtAmountOutput = getUDTAmountFromData(cellData);
+          if (cell.type != null) {
+            if (
+              !bytesEq(
+                cell.type.hash().slice(0, 20),
+                bindings.hex.decode(udtTypeScriptHash),
+              )
+            ) {
+              log.error("UDT Type Script Hash does not match");
+              return ValidateError.UDTTypeScriptHashMismatch;
+            }
+
+            const cellData = HighLevel.loadCellData(i, bindings.SOURCE_OUTPUT);
+            if (cellData.byteLength === 16) {
+              receiverUdtAmountOutput = getUDTAmountFromData(cellData);
+            }
           }
           break;
         }
