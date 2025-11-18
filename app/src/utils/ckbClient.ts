@@ -55,7 +55,7 @@ export const contractScript =
     ? scripts.devnet["airdrop-lock.bc"]
     : scripts.testnet["airdrop-lock.bc"];
 
-export const sudtScript =
+export const xudtScript =
   getNetwork() === "devnet"
-    ? systemScripts.devnet.sudt
-    : systemScripts.testnet.sudt;
+    ? systemScripts.devnet.xudt
+    : systemScripts.testnet.xudt;

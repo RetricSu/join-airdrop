@@ -20,11 +20,11 @@ describe("airdrop-lock contract", () => {
     const signerAddressObj = await signer.getRecommendedAddressObj();
     const signerLock = signerAddressObj.script;
 
-    // Create UDT type script (using SUDT deployed on devnet)
+    // Create UDT type script (using XUDT deployed on devnet)
     const udtTypeScript = {
-      codeHash: systemScripts.devnet.sudt.script.codeHash,
-      hashType: systemScripts.devnet.sudt.script.hashType,
-      args: signerLock.hash(), // SUDT owner is the signer
+      codeHash: systemScripts.devnet.xudt.script.codeHash,
+      hashType: systemScripts.devnet.xudt.script.hashType,
+      args: signerLock.hash(), // XUDT owner is the signer
     };
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
@@ -57,7 +57,7 @@ describe("airdrop-lock contract", () => {
       ],
       outputsData: [hexFrom("0xE8030000000000000000000000000000")], // 1000 UDT
       cellDeps: [
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -79,7 +79,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -123,7 +123,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -139,11 +139,11 @@ describe("airdrop-lock contract", () => {
     const signerAddressObj = await signer.getRecommendedAddressObj();
     const signerLock = signerAddressObj.script;
 
-    // Create UDT type script (using SUDT deployed on devnet)
+    // Create UDT type script (using XUDT deployed on devnet)
     const udtTypeScript = {
-      codeHash: systemScripts.devnet.sudt.script.codeHash,
-      hashType: systemScripts.devnet.sudt.script.hashType,
-      args: signerLock.hash(), // SUDT owner is the signer
+      codeHash: systemScripts.devnet.xudt.script.codeHash,
+      hashType: systemScripts.devnet.xudt.script.hashType,
+      args: signerLock.hash(), // XUDT owner is the signer
     };
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
@@ -178,7 +178,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -218,7 +218,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -261,7 +261,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -293,7 +293,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 
@@ -314,11 +314,11 @@ describe("airdrop-lock contract", () => {
     const signerAddressObj = await signer.getRecommendedAddressObj();
     const signerLock = signerAddressObj.script;
 
-    // Create UDT type script (using SUDT deployed on devnet)
+    // Create UDT type script (using XUDT deployed on devnet)
     const udtTypeScript = {
-      codeHash: systemScripts.devnet.sudt.script.codeHash,
-      hashType: systemScripts.devnet.sudt.script.hashType,
-      args: signerLock.hash(), // SUDT owner is the signer
+      codeHash: systemScripts.devnet.xudt.script.codeHash,
+      hashType: systemScripts.devnet.xudt.script.hashType,
+      args: signerLock.hash(), // XUDT owner is the signer
     };
 
     // Args: UDT type hash (20 bytes) + original lock hash (20 bytes) + since (8 bytes)
@@ -381,7 +381,7 @@ describe("airdrop-lock contract", () => {
       cellDeps: [
         ...ckbJsVmScript.script.cellDeps.map((c) => c.cellDep),
         ...contractScript.cellDeps.map((c) => c.cellDep),
-        ...systemScripts.devnet.sudt.script.cellDeps.map((c) => c.cellDep),
+        ...systemScripts.devnet.xudt.script.cellDeps.map((c) => c.cellDep),
       ],
     });
 

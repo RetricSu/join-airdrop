@@ -5,7 +5,7 @@ import {
   Cell,
   Hex,
 } from "@ckb-ccc/connector-react";
-import { ckbJsVmScript, contractScript, sudtScript } from "./ckbClient";
+import { ckbJsVmScript, contractScript, xudtScript } from "./ckbClient";
 
 export const findJoinAirdropCells = async (
   client: ccc.Client,
@@ -81,8 +81,8 @@ export const mintUDTToJoinCell = async (
   amount: bigint,
 ): Promise<string> => {
   const udtTypeScript = {
-    codeHash: sudtScript.script.codeHash,
-    hashType: sudtScript.script.hashType,
+    codeHash: xudtScript.script.codeHash,
+    hashType: xudtScript.script.hashType,
     args: (await udtSigner.getRecommendedAddressObj()).script.hash(), // UDT owner
   };
 
@@ -102,7 +102,7 @@ export const mintUDTToJoinCell = async (
     cellDeps: [
       ...ckbJsVmScript.script.cellDeps.map((c: any) => c.cellDep),
       ...contractScript.cellDeps.map((c: any) => c.cellDep),
-      ...sudtScript.script.cellDeps.map((c: any) => c.cellDep),
+      ...xudtScript.script.cellDeps.map((c: any) => c.cellDep),
     ],
   });
 
@@ -116,17 +116,23 @@ export function getListedUDTTypeHash(): Hex {
   // This should be the type hash of the UDT token used for the airdrop
   // You can get this from getDefaultUDTTypeHashFromLock
   const envTypeHash = process.env.REACT_APP_TARGET_UDT_TYPE_HASH;
-  if (envTypeHash && envTypeHash.startsWith("0x") && envTypeHash.length === 66) {
+  if (
+    envTypeHash &&
+    envTypeHash.startsWith("0x") &&
+    envTypeHash.length === 66
+  ) {
     return envTypeHash as Hex;
-  }else{
-    throw new Error("REACT_APP_TARGET_UDT_TYPE_HASH is not set correctly in environment variables");
+  } else {
+    throw new Error(
+      "REACT_APP_TARGET_UDT_TYPE_HASH is not set correctly in environment variables",
+    );
   }
 }
 
 export function getDefaultUDTTypeHashFromLock(lock: ccc.Script): Hex {
   const script: ccc.ScriptLike = {
-    codeHash: sudtScript.script.codeHash,
-    hashType: sudtScript.script.hashType,
+    codeHash: xudtScript.script.codeHash,
+    hashType: xudtScript.script.hashType,
     args: lock.hash(), // Extract UDT type hash from args
   };
 
