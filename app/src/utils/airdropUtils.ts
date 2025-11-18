@@ -64,6 +64,7 @@ export const createJoinAirdropCell = async (
   const tx = ccc.Transaction.from({
     outputs: [
       {
+        capacity: 250n * 10n ** 8n, // 250 CKB
         lock: mainScript,
       },
     ],
