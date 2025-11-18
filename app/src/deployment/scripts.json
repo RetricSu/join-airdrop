@@ -24,7 +24,7 @@
         {
           "cellDep": {
             "outPoint": {
-              "txHash": "0x28278d84a928538d4045213a07822a4f867b90b246612cb92a620b291e330267",
+              "txHash": "0xe74a114f8ef497d92344f50eaeb892f51f46edf0c95b6a50bad63399c33748f9",
               "index": 0
             },
             "depType": "code"
